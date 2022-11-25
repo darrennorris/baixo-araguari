@@ -43,3 +43,8 @@ O objetivo é calcular métricas de paisagem, descrever a composição e
 a configuração da paisagem ao redor do Rio Araguari nos municípios de Macapá e Cutias.
 
 As métricas da paisagem nos ajudam a entender as mudanças na paisagem de diferentes perspectivas (visual, ecológica, cultural). Asssim sendo, análises com métricas de paisagem é um atividade fundamental na ecologia da paisagem. Nesta exemplo (https://rpubs.com/darren75/baixo_araguari) aprenderemos sobre como analisar a cobertura da terra com métricas de paisagem em R.
+
+# Área de estudo
+Antigamente o Rio Araguari deságuava no oceano Atlântico, formando ondas que davam origem a Pororoca, utilizada para campeonatos de surfe. No entanto, atualmente, devido ao progressivo processo de erosão do Canal do Urucurituba, quase toda a água do rio é desviada para o rio Amazonas.  Portanto o Pororoca foi extinto, por causa do assoreamento na antiga foz do Rio Araguari.
+
+Para visualizar um exemplo com as mudancas: https://earthengine.google.com/timelapse#v=1.07215,-50.49244,8.691,latLng&t=1.11&ps=50&bt=19840101&et=20201231&startDwell=0&endDwell=0
