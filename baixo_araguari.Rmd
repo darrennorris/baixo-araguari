@@ -1,0 +1,45 @@
+---
+title: "Baixo Araguari"
+author: "Darren Norris"
+date: "`r Sys.Date()`"
+output:
+  bookdown::pdf_document2:
+    toc: yes
+    toc_depth: 3
+    number_sections: yes
+    extra_dependencies: flafter
+    highlight: tango
+    includes:
+      in_header: preamble.txe
+  bookdown::html_document2:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    fig_caption: yes
+urlcolor: blue
+toc-title: Sumário
+header-includes:
+  - \counterwithin{figure}{section}
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+  echo = TRUE, collapse = TRUE,
+  comment = "#>" 
+  )
+def_hook <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  out <- def_hook(x, options)
+  return(paste("\\begin{framed}\\begin{verbatim}", x, "\\end{verbatim}\\end{framed}", collapse = "\n"))
+})
+```
+
+\newpage{}
+
+# Apresentação
+
+O objetivo é calcular métricas de paisagem, descrever a composição e 
+a configuração da paisagem ao redor do Rio Araguari nos municípios de Macapá e Cutias.
+
+As métricas da paisagem nos ajudam a entender as mudanças na paisagem de diferentes perspectivas (visual, ecológica, cultural). Asssim sendo, análises com métricas de paisagem é um atividade fundamental na ecologia da paisagem. Nesta exemplo (https://rpubs.com/darren75/baixo_araguari) aprenderemos sobre como analisar a cobertura da terra com métricas de paisagem em R.
