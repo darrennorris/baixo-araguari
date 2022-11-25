@@ -48,3 +48,119 @@ As métricas da paisagem nos ajudam a entender as mudanças na paisagem de difer
 Antigamente o Rio Araguari deságuava no oceano Atlântico, formando ondas que davam origem a Pororoca, utilizada para campeonatos de surfe. No entanto, atualmente, devido ao progressivo processo de erosão do Canal do Urucurituba, quase toda a água do rio é desviada para o rio Amazonas.  Portanto o Pororoca foi extinto, por causa do assoreamento na antiga foz do Rio Araguari.
 
 Para visualizar um exemplo com as mudancas: https://earthengine.google.com/timelapse#v=1.07215,-50.49244,8.691,latLng&t=1.11&ps=50&bt=19840101&et=20201231&startDwell=0&endDwell=0
+
+# Pacotes necessarios
+
+```{r, message=FALSE, warning=FALSE}
+library(landscapemetrics)
+library(tidyverse)
+library(sf)
+library(raster)
+library(terra)
+library(tmap)
+library(gridExtra)
+library(kableExtra)
+library(leafpop)
+library(mapview)
+library(mgcv)
+library(readxl)
+```
+
+
+# Dados
+
+## Dados: MapBiomas
+
+Existem varios formas de importar e exportar dados geoespaciais.
+Precisamos o arquivo com os dados de MapBiomas referente a região de estudo. 
+Aqui vamos usar dados de 1985 "utm_cover_AP_muni_cutias_1985.tif" .
+
+Link: [https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif](https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif){target="_blank"} 
+
+Lembrando-se de salvar o arquivo ("utm_cover_AP_muni_cuitas_1985.tif") em um local conhecido no seu computador. Agora, nós podemos carregar os dados de cobertura da terra "utm_cover_AP_muni_cuitas_1985.tif" com a função <code>rast</code>.
+```{r eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_1985.tif"
+mapbiomas_1985 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2020.tif"
+mapbiomas_2020 <- rast(file.choose())
+
+```
+
+```{r, echo=FALSE}
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif"
+mapbiomas_1985 <- rast(rin)
+mapbiomas_1985[mapbiomas_1985==0] <- NA
+rin2020 <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2020.tif"
+mapbiomas_2020 <- rast(rin2020)
+mapbiomas_2020[mapbiomas_2020==0] <- NA
+```
+
+```{r}
+class_nomes <- read_excel("data/raster/AP_utm_muni_cutias/mapbiomas_6_legend.xlsx")
+class_antropic <- class_nomes %>% 
+  filter(type_class == "antropic") %>% pull(aid)
+
+mapbiomas_1985_reclass <- mapbiomas_1985
+mapbiomas_1985_reclass[mapbiomas_1985 %in% class_antropic] <- 18
+
+mapbiomas_2020_reclass <- mapbiomas_2020
+mapbiomas_2020_reclass[mapbiomas_2020 %in% class_antropic] <- 18
+
+res_pland<- calculate_lsm(mapbiomas_1985, what = "lsm_c_pland")
+# 53.8 Campestre, 31.7 floresta, 8.5 agua, 2.5 pasto, 1.9 campo alagado
+res_pland %>% 
+  left_join(class_nomes, by = c("class" = "aid")) %>% 
+  arrange(desc(value))
+res_reclass_pland<- calculate_lsm(mapbiomas_1985_reclass, what = "lsm_c_pland")
+# 53.8 Campestre, 31.7 floresta, 8.5 agua, 2.5 pasto, 1.9 campo alagado
+res_reclass_pland %>% 
+  left_join(class_nomes, by = c("class" = "aid")) %>% 
+  arrange(desc(value))
+
+# Plot
+selvals <- which(is.finite(unique(values(mapbiomas_1985_reclass))))
+class_vals <- unique(values(mapbiomas_1985_reclass))[selvals]
+class_color <- class_nomes %>% 
+  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(hexadecimal_code)
+class_color <- paste("#", class_color, sep="")
+names(class_color) <-  class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
+#labelas
+my_label <- class_nomes %>% 
+  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(classe_descricao)
+my_label <- ifelse(my_label=="Agricultura", "Antropico", my_label)
+names(my_label) <- class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
+
+tm_shape(mapbiomas_1985_reclass) +
+  tm_raster(style = "cat", palette = class_color, labels = my_label, title="") + 
+tm_scale_bar(breaks = c(0, 20, 40), text.size = 1, 
+             position=c("right", "bottom")) +
+tm_layout(legend.bg.color="white")
+
+mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_2020)
+mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
+reclass_m <- as.matrix(data.frame(human = class_antropic, new_value = 18))
+mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, reclass_m)
+
+# Plot
+vals85a20 <- c(unique(values(mapbiomas_1985_reclass)), unique(values(mapbiomas_2020_reclass)))
+class_vals <- unique(vals85a20[is.finite(vals85a20)])
+class_color <- class_nomes %>% 
+  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(hexadecimal_code)
+class_color <- paste("#", class_color, sep="")
+names(class_color) <-  class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
+#labelas
+my_label <- class_nomes %>% 
+  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(classe_descricao)
+my_label <- ifelse(my_label=="Agricultura", "Antropico", my_label)
+names(my_label) <- class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
+tm_shape(mapbiomas_1985_2020) + 
+   tm_raster(style = "cat", 
+             palette = class_color, labels = my_label, title="")  +
+  tm_facets(nrow = 1) + 
+tm_scale_bar(breaks = c(0, 20, 40), text.size = 1, 
+             position=c("right", "bottom")) +
+tm_layout(legend.bg.color="white", 
+          legend.outside = TRUE,
+            legend.outside.position = "bottom")
+```
+
