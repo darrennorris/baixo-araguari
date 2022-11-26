@@ -3,6 +3,11 @@ title: "Baixo Araguari"
 author: "Darren Norris"
 date: "`r Sys.Date()`"
 output:
+  bookdown::html_document2:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    fig_caption: yes
   bookdown::pdf_document2:
     toc: yes
     toc_depth: 3
@@ -11,11 +16,6 @@ output:
     highlight: tango
     includes:
       in_header: preamble.txe
-  bookdown::html_document2:
-    toc: yes
-    toc_depth: 3
-    toc_float: yes
-    fig_caption: yes
 urlcolor: blue
 toc-title: Sumário
 header-includes:
@@ -190,57 +190,13 @@ tm_scale_bar(breaks = c(0, 20, 40), text.size = 1,
              position=c("right", "bottom")) +
 tm_layout(legend.bg.color="white")
 
-mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1988, mapbiomas_1991, 
-                         mapbiomas_1994, mapbiomas_1997, mapbiomas_2000,
-                        mapbiomas_2003,mapbiomas_2006, mapbiomas_2009, 
-                        mapbiomas_2012, mapbiomas_2015, mapbiomas_2018,
-                        mapbiomas_2020)
-mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
-reclass_m <- as.matrix(data.frame(human = class_antropic, new_value = 18))
-mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, reclass_m)
 
-mapbiomas_1985_2020_ag <- aggregate(mapbiomas_1985_2020, fact=5, fun="modal")
-# Plot
-vals85a20 <- c(unique(values(mapbiomas_1985_reclass)), 
-               unique(values(mapbiomas_1991_reclass)), 
-               unique(values(mapbiomas_1997_reclass)), 
-               unique(values(mapbiomas_2003_reclass)), 
-               unique(values(mapbiomas_2009_reclass)), 
-               unique(values(mapbiomas_2015_reclass)), 
-               unique(values(mapbiomas_2020_reclass)))
-class_vals <- unique(vals85a20[is.finite(vals85a20)])
-class_color <- class_nomes %>% 
-  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(hexadecimal_code)
-class_color <- paste("#", class_color, sep="")
-names(class_color) <-  class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
-#labelas
-my_label <- class_nomes %>% 
-  dplyr::filter(aid %in% class_vals) %>% dplyr::pull(classe_descricao)
-my_label <- ifelse(my_label=="Agricultura", "Antropico", my_label)
-names(my_label) <- class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
-tm_shape(mapbiomas_1985_2020) + 
-   tm_raster(style = "cat", 
-             palette = class_color, labels = my_label, title="")  +
-  tm_facets(ncol=2) + 
-#tm_scale_bar(breaks = c(0, 20, 40), text.size = 1, 
-#             position=c("right", "bottom")) +
-tm_layout(legend.bg.color="white", 
-          legend.outside = TRUE,
-            legend.outside.position = "right")
 ```
 
+include in out put
 
-```{r}
-# zoom in
-my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
-  st_bbox()
-my_bb[1] <- 553378
-# animation
-tm_ani <- tm_shape(mapbiomas_1985_2020_ag, bbox = my_bb) + 
-   tm_raster(style = "cat", 
-             palette = class_color, legend.show =FALSE)  +
-  tm_facets(ncol=1, nrow=1) 
-
-tmap_animation(tm_ani, delay=100, filename = "baixo_araguari.gif")
+```{r fig-ani, fig.show='animate', ffmpeg.format='gif', dev='jpeg'}
+#tmap_animation(tm_ani, delay=100)
+a <- hello
 ```
 
