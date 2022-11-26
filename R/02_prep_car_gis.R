@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(sf)
+library(riverdist)
 # Extent
 myext <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp")
 # CAR 1600212 = Cutias 
@@ -33,3 +34,47 @@ CAR_area_consolidada <- bind_rows(area_con_cutias, area_con_macapa)
 # Rivers
 rio_urucurituba <- read_sf("data/vector/urucurituba.shp")
 rio_gurijuba <- read_sf("data/vector/gurijuba.shp")
+
+# Sample points at regular intervals
+(st_length(rio_urucurituba)/1000)/50 # total = 37.8 km 0.757 km
+(st_length(rio_gurijuba)/1000)/65 # total = 48.8 km 0.752 km
+
+rio_urucurituba_points  <- st_cast(rio_urucurituba, "LINESTRING") %>% st_union() %>%  
+  st_sample(size = 50, type = "regular") %>% st_cast("POINT") %>% data.frame() %>% st_as_sf()
+rio_gurijuba_points  <- st_cast(rio_gurijuba, "LINESTRING") %>% st_union() %>%  
+  st_sample(size = 65, type = "regular") %>% st_cast("POINT") %>% data.frame() %>% st_as_sf()
+
+# Distance along river from Amazon. Include vertices at 30 m
+# Make riverdist object
+# 1273 vertices
+rd_urucurituba <- cleanup(line2network(as(rio_urucurituba, "Spatial")))
+# 1672 vertices
+rd_gurijuba <- cleanup(line2network(as(rio_gurijuba, "Spatial")))
+
+# Add sample points
+points_riv_urucurituba <- xy2segvert(x=st_coordinates(rio_urucurituba_points)[,1], 
+                                     y=st_coordinates(rio_urucurituba_points)[,2], 
+                                     rivers=rd_urucurituba)
+plot(rd_urucurituba)
+riverpoints(seg=points_riv_urucurituba$seg, 
+            vert=points_riv_urucurituba$vert, rivers=rd_urucurituba, pch=5, 
+            col="blue")
+#
+points_riv_gurijuba <- xy2segvert(x=st_coordinates(rio_gurijuba_points)[,1], 
+                                     y=st_coordinates(rio_gurijuba_points)[,2], 
+                                     rivers=rd_gurijuba)
+plot(rd_gurijuba)
+riverpoints(seg=points_riv_gurijuba$seg, 
+            vert=points_riv_gurijuba$vert, rivers=rd_gurijuba, pch=5, 
+            col="blue")
+
+# Calcuklate distances
+riverdistancetofrom(seg1=points_riv_urucurituba$seg, 
+                    vert1=points_riv_urucurituba$vert, 
+                    seg2=1, vert2=1273, 
+                    rivers=rd_urucurituba)
+
+riverdistancetofrom(seg1=points_riv_gurijuba$seg, 
+                    vert1=points_riv_gurijuba$vert, 
+                    seg2=1, vert2=1672, 
+                    rivers=rd_gurijuba)
