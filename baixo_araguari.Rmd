@@ -42,6 +42,35 @@ knit_hooks$set(output = function(x, options) {
 O objetivo é calcular métricas de paisagem, descrever a composição e 
 a configuração da paisagem ao redor do Rio Araguari nos municípios de Macapá e Cutias.
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(sf)
+library(terra)
+library(tmap)
+class_color <- readRDS("data/class_color.RDS")
+mapbiomas_1985_2020_ag <- readRDS("data/mapbiomas_1985_2020_ag.RDS")
+# animation
+# zoom in
+my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
+  st_bbox()
+my_bb[1] <- 553378
+# animation
+tm_ani <- tm_shape(mapbiomas_1985_2020_ag, bbox = my_bb) + 
+  tm_raster(style = "cat", 
+            palette = class_color, legend.show =FALSE)  +
+  tm_facets(ncol=1, nrow=1) 
+
+```
+
+
+
+```{r fig.show='animate', animation.hook="gifski", echo=FALSE, warning=FALSE, message=FALSE}
+tm_ani
+```
+
+
+
 As métricas da paisagem nos ajudam a entender as mudanças na paisagem de diferentes perspectivas (visual, ecológica, cultural). Asssim sendo, análises com métricas de paisagem é um atividade fundamental na ecologia da paisagem. Nesta exemplo (https://rpubs.com/darren75/baixo_araguari) aprenderemos sobre como analisar a cobertura da terra com métricas de paisagem em R.
 
 # Área de estudo
@@ -135,30 +164,6 @@ class_antropic <- class_nomes %>%
 
 mapbiomas_1985_reclass <- mapbiomas_1985
 mapbiomas_1985_reclass[mapbiomas_1985 %in% class_antropic] <- 18
-mapbiomas_1988_reclass <- mapbiomas_1988
-mapbiomas_1988_reclass[mapbiomas_1988 %in% class_antropic] <- 18
-mapbiomas_1991_reclass <- mapbiomas_1991
-mapbiomas_1991_reclass[mapbiomas_1991 %in% class_antropic] <- 18
-mapbiomas_1994_reclass <- mapbiomas_1994
-mapbiomas_1994_reclass[mapbiomas_1994 %in% class_antropic] <- 18
-mapbiomas_1997_reclass <- mapbiomas_1997
-mapbiomas_1997_reclass[mapbiomas_1997 %in% class_antropic] <- 18
-mapbiomas_2000_reclass <- mapbiomas_2000
-mapbiomas_2000_reclass[mapbiomas_2000 %in% class_antropic] <- 18
-mapbiomas_2003_reclass <- mapbiomas_2003
-mapbiomas_2003_reclass[mapbiomas_2003 %in% class_antropic] <- 18
-mapbiomas_2006_reclass <- mapbiomas_2006
-mapbiomas_2006_reclass[mapbiomas_2006 %in% class_antropic] <- 18
-mapbiomas_2009_reclass <- mapbiomas_2009
-mapbiomas_2009_reclass[mapbiomas_2009 %in% class_antropic] <- 18
-mapbiomas_2012_reclass <- mapbiomas_2012
-mapbiomas_2012_reclass[mapbiomas_2012 %in% class_antropic] <- 18
-mapbiomas_2015_reclass <- mapbiomas_2015
-mapbiomas_2015_reclass[mapbiomas_2015 %in% class_antropic] <- 18
-mapbiomas_2018_reclass <- mapbiomas_2018
-mapbiomas_2018_reclass[mapbiomas_2018 %in% class_antropic] <- 18
-mapbiomas_2020_reclass <- mapbiomas_2020
-mapbiomas_2020_reclass[mapbiomas_2020 %in% class_antropic] <- 18
 
 res_pland<- calculate_lsm(mapbiomas_1985, what = "lsm_c_pland")
 # 53.8 Campestre, 31.7 floresta, 8.5 agua, 2.5 pasto, 1.9 campo alagado
@@ -193,10 +198,4 @@ tm_layout(legend.bg.color="white")
 
 ```
 
-include in out put
-
-```{r fig-ani, fig.show='animate', ffmpeg.format='gif', dev='jpeg'}
-#tmap_animation(tm_ani, delay=100)
-a <- hello
-```
 
