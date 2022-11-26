@@ -7,6 +7,13 @@ library(sf)
 library(riverdist)
 # Extent
 myext <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp")
+# Muni poly
+muni_poly <- st_read("data/vector/AP_muni_Macapa_Cutias.shp") %>% 
+  st_transform(31976)
+
+# Clipped muni poly
+muni_poly_clip <- st_read("data/vector/AP_muni_Macapa_Cutias_clip.shp") %>% 
+  st_union()
 # CAR 1600212 = Cutias 
 unzip("data/vector/CAR/SHAPE_1600212/APP.zip", 
       exdir="data/vector/CAR/SHAPE_1600212/APP")
@@ -68,13 +75,60 @@ riverpoints(seg=points_riv_gurijuba$seg,
             vert=points_riv_gurijuba$vert, rivers=rd_gurijuba, pch=5, 
             col="blue")
 
-# Calcuklate distances
-riverdistancetofrom(seg1=points_riv_urucurituba$seg, 
+# Add distances to points
+rio_urucurituba_points$dist_amazonas_km <-  round( 
+  riverdistancetofrom(seg1=points_riv_urucurituba$seg, 
                     vert1=points_riv_urucurituba$vert, 
                     seg2=1, vert2=1273, 
-                    rivers=rd_urucurituba)
-
-riverdistancetofrom(seg1=points_riv_gurijuba$seg, 
+                    rivers=rd_urucurituba)/1000,3)
+rio_urucurituba_points$aid <- paste("urucurituba", 
+                                    rank(rio_urucurituba_points$dist_amazonas_km), 
+                                    sep="_")
+rio_urucurituba_points$nome_rio <- "Rio Urucurituba"
+rio_gurijuba_points$dist_amazonas_km <- round( 
+  riverdistancetofrom(seg1=points_riv_gurijuba$seg, 
                     vert1=points_riv_gurijuba$vert, 
                     seg2=1, vert2=1672, 
-                    rivers=rd_gurijuba)
+                    rivers=rd_gurijuba)/1000,3)
+rio_gurijuba_points$aid <- paste("gurijuba", 
+                                 rank(rio_gurijuba_points$dist_amazonas_km), 
+                                 sep="_")
+rio_gurijuba_points$nome_rio <- "Rio Gurijuba"
+
+rio_pontos <- bind_rows(rio_urucurituba_points, rio_gurijuba_points)
+# Buffers
+bind_rows(
+st_buffer(rio_pontos, dist=125) %>% 
+    mutate(buff_dist = 125),
+st_buffer(rio_pontos, dist=250) %>% 
+  mutate(buff_dist = 250),
+st_buffer(rio_pontos, dist=500) %>% 
+  mutate(buff_dist = 500),
+st_buffer(rio_pontos, dist=1000) %>% 
+  mutate(buff_dist = 1000),
+st_buffer(rio_pontos, dist=2000) %>% 
+  mutate(buff_dist = 2000),
+st_buffer(rio_pontos, dist=4000) %>% 
+  mutate(buff_dist = 4000),
+st_buffer(rio_pontos, dist=8000) %>% 
+  mutate(buff_dist = 8000)
+) %>% st_intersection(muni_poly_clip) -> rios_points_buffers
+rios_points_buffers$buff_area_km2 <- round(as.numeric(units::set_units(st_area(rios_points_buffers),km^2)), 3)
+mapview::mapview(rios_points_buffers)
+
+# Export as gpkg
+outfile <- "C:/Users/user/Documents/CA/baixo-araguari/data/vector/baixo_araguari.GPKG"
+st_write(rio_pontos, dsn = outfile, 
+         layer = "rio_pontos", delete_layer = TRUE, append = TRUE)
+st_write(rios_points_buffers, dsn = outfile, 
+         layer = "rios_points_buffers", delete_layer = TRUE, append = TRUE)
+st_write(rio_gurijuba, dsn = outfile, 
+         layer = "rio_gurijuba", delete_layer = TRUE, append = TRUE)
+st_write(rio_urucurituba, dsn = outfile, 
+         layer = "rio_urucurituba", delete_layer = TRUE, append = TRUE)
+st_write(CAR_area_consolidada, dsn = outfile, 
+         layer = "CAR_area_consolidada", delete_layer = TRUE, append = TRUE)
+st_write(muni_poly, dsn = outfile, 
+         layer = "muni_poly", delete_layer = TRUE, append = TRUE)
+
+st_layers(outfile)
