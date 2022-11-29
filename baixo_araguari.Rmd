@@ -133,27 +133,36 @@ mapbiomas_2020 <- rast(file.choose())
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif"
 mapbiomas_1985 <- rast(rin)
 mapbiomas_1985[mapbiomas_1985==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1986.tif"
+mapbiomas_1986 <- rast(rin)
+mapbiomas_1986[mapbiomas_1986==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1987.tif"
+mapbiomas_1987 <- rast(rin)
+mapbiomas_1987[mapbiomas_1987==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1988.tif"
 mapbiomas_1988 <- rast(rin)
 mapbiomas_1988[mapbiomas_1988==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1991.tif"
-mapbiomas_1991 <- rast(rin)
-mapbiomas_1991[mapbiomas_1991==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1994.tif"
-mapbiomas_1994 <- rast(rin)
-mapbiomas_1994[mapbiomas_1994==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1997.tif"
-mapbiomas_1997 <- rast(rin)
-mapbiomas_1997[mapbiomas_1997==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1989.tif"
+mapbiomas_1989 <- rast(rin)
+mapbiomas_1989[mapbiomas_1989==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1999.tif"
+mapbiomas_1999 <- rast(rin)
+mapbiomas_1999[mapbiomas_1999==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2000.tif"
 mapbiomas_2000 <- rast(rin)
 mapbiomas_2000[mapbiomas_2000==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2001.tif"
+mapbiomas_2001 <- rast(rin)
+mapbiomas_2001[mapbiomas_2001==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2002.tif"
+mapbiomas_2002 <- rast(rin)
+mapbiomas_2002[mapbiomas_2002==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2003.tif"
 mapbiomas_2003 <- rast(rin)
 mapbiomas_2003[mapbiomas_2003==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2006.tif"
-mapbiomas_2006 <- rast(rin)
-mapbiomas_2006[mapbiomas_2006==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2008.tif"
+mapbiomas_2008 <- rast(rin)
+mapbiomas_2008[mapbiomas_2008==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2009.tif"
 mapbiomas_2009 <- rast(rin)
 mapbiomas_2009[mapbiomas_2009==0] <- NA
@@ -166,12 +175,18 @@ mapbiomas_2011[mapbiomas_2011==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2012.tif"
 mapbiomas_2012 <- rast(rin)
 mapbiomas_2012[mapbiomas_2012==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2015.tif"
-mapbiomas_2015 <- rast(rin)
-mapbiomas_2015[mapbiomas_2015==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2016.tif"
+mapbiomas_2016 <- rast(rin)
+mapbiomas_2016[mapbiomas_2016==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2017.tif"
+mapbiomas_2017 <- rast(rin)
+mapbiomas_2017[mapbiomas_2017==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2018.tif"
 mapbiomas_2018 <- rast(rin)
 mapbiomas_2018[mapbiomas_2018==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2019.tif"
+mapbiomas_2019 <- rast(rin)
+mapbiomas_2019[mapbiomas_2019==0] <- NA
 rin2020 <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2020.tif"
 mapbiomas_2020 <- rast(rin2020)
 mapbiomas_2020[mapbiomas_2020==0] <- NA
@@ -179,10 +194,14 @@ mapbiomas_2020[mapbiomas_2020==0] <- NA
 
 ```{r}
 
-mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1997, mapbiomas_2006, 
-                         mapbiomas_2009, mapbiomas_2010, mapbiomas_2011, 
-                         mapbiomas_2012,
-                         mapbiomas_2020)
+mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1986, mapbiomas_1987, 
+                         mapbiomas_1988, mapbiomas_1989, 
+                         mapbiomas_1999, mapbiomas_2000, mapbiomas_2001, 
+                         mapbiomas_2002, mapbiomas_2003, 
+                         mapbiomas_2008, mapbiomas_2009, mapbiomas_2010,
+                         mapbiomas_2011, mapbiomas_2012,
+                         mapbiomas_2016, mapbiomas_2017, mapbiomas_2018, 
+                         mapbiomas_2019, mapbiomas_2020)
 mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
 
 # Aggregate para fazer a mapa
@@ -209,8 +228,19 @@ vals85a20 <- c(unique(values(subset(mapbiomas_1985_2020_ag, 1))),
                unique(values(subset(mapbiomas_1985_2020_ag, 5))),
                unique(values(subset(mapbiomas_1985_2020_ag, 6))), 
                unique(values(subset(mapbiomas_1985_2020_ag, 7))),
-               unique(values(subset(mapbiomas_1985_2020_ag, 8))) 
-               )
+               unique(values(subset(mapbiomas_1985_2020_ag, 8))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 9))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 10))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 11))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 12))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 13))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 14))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 15))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 16))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 17))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 18))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 19))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 20))))
 selvals <- which(is.finite(vals85a20))
 class_vals <- unique(vals85a20[is.finite(vals85a20)])
 class_color <- class_nomes %>% 
@@ -228,12 +258,13 @@ tm_shape(mapbiomas_1985_2020_ag) +
   tm_raster(style = "cat", palette = class_color, labels = my_label, title="") + 
 tm_scale_bar(breaks = c(0, 10), text.size = 1, 
              position=c("right", "bottom")) +
-tm_facets(ncol=3) + 
+tm_facets(ncol=5) + 
 tm_layout(legend.bg.color="white", legend.outside = TRUE,
             legend.outside.position = "right", 
-          panel.labels = c('1985', '1997', '2006', 
-                           '2009', '2010', '2011', '2012', 
-                           '2020'))
+          panel.labels = c('1985', '1986', '1987', '1988','1989',
+                           '1999', '2000', '2001', '2002', '2003',
+                          '2008', '2009', '2010', '2011', '2012', 
+                           '2016', '2017', '2018', '2019', '2020'))
 
 ```
 
@@ -301,8 +332,8 @@ minhas_metricas <- c("lsm_c_cpland",
 mybuffers <- rios_points_buffers %>% 
   filter(buff_dist %in% c(500, 1000, 2000), 
          nome_rio == "Rio Urucurituba")
-# Calcular as metricás (30 minutos mais ou menos)
-# 8 anos X 9 metricas x 50 pontos X 3 buffers
+# Calcular as metricás (50 minutos mais ou menos)
+# 20 anos X 9 metricas x 50 pontos X 3 buffers
 # Numero de classes mude conforme ano, ponto e buffer
 res_metricas <- sample_lsm(mapbiomas_1985_2020, 
                            y = mybuffers, 
@@ -318,23 +349,38 @@ res_metricas <- res_metricas %>%
   left_join(class_nomes, by = c("class" = "aid") 
             ) %>% 
    dplyr::mutate(ano = case_when(layer == 1 ~ 1985, 
-                          layer == 2 ~ 1997, 
-                          layer == 3 ~ 2006, 
-                          layer == 4 ~ 2009, 
-                          layer == 5 ~ 2010, 
-                          layer == 6 ~ 2011, 
-                          layer == 7 ~ 2012, 
-                          layer == 8 ~ 2020 
+                          layer == 2 ~ 1986, 
+                          layer == 3 ~ 1987, 
+                          layer == 4 ~ 1988, 
+                          layer == 5 ~ 1989, 
+                          layer == 6 ~ 1999, 
+                          layer == 7 ~ 2000, 
+                          layer == 8 ~ 2001, 
+                          layer == 9 ~ 2002, 
+                          layer == 10 ~ 2003, 
+                          layer == 11 ~ 2008, 
+                          layer == 12 ~ 2009, 
+                          layer == 13 ~ 2010, 
+                          layer == 14 ~ 2011, 
+                          layer == 15 ~ 2012, 
+                          layer == 16 ~ 2016,
+                          layer == 17 ~ 2017,
+                          layer == 18 ~ 2018,
+                          layer == 19 ~ 2019,
+                          layer == 20 ~ 2020 
                           ) 
           ) %>% 
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
 ```
 
-Grafico
+Arrumar dados
 
 ```{r}
 
-expand.grid(ano = c(1985, 1997, 2006, 2009, 2010, 2011, 2012, 2020), 
+expand.grid(ano = c(1985, 1986, 1987, 1988,1989,
+                           1999, 2000, 2001, 2002, 2003,
+                          2008, 2009, 2010, 2011, 2012, 
+                           2016, 2017, 2018, 2019, 2020), 
             aid_buff = unique(mybuffers$aid_buff), stringsAsFactors = FALSE) %>% 
   mutate(class = 33, 
          newvalue = NA) -> df_all_points
@@ -347,16 +393,27 @@ df_all_points %>% left_join(res_metricas %>%
               dplyr::filter(nome_rio == "Rio Urucurituba") %>% 
               dplyr::select(aid_buff, nome_rio, buff_dist, dist_amazonas_km), 
   by=c("aid_buff"="aid_buff") 
-  ) %>%
-  mutate(value = replace_na(value, -1)) %>%
+  ) %>% 
+    mutate(value = replace_na(value, -1)) -> res_grafico
+
+
+
+```
+
+
+Grafico
+
+```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem de 1985 a 2020. Valores anuais de Coesão calculados em 1 km tampões em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
+
+res_grafico %>%
   ggplot(aes(x=ano, y = dist_amazonas_km)) + 
   geom_point(aes(colour=value)) + 
   #scale_color_gradient(low="#56B1F7", high="#132B43") + 
-  scale_color_gradient2(low = "green",
-  mid = "yellow",
-  high = "blue",
-  midpoint = 50) +
-  facet_wrap(~buff_dist)
+  scale_color_gradient2("cohesion", 
+                        low = "green", mid = "yellow", high = "blue", 
+                        midpoint = 50) +
+  facet_wrap(~buff_dist) + 
+  labs(y="distância até Rio Amazonas (km)")
 
 ```
 
