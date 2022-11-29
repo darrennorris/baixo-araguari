@@ -114,6 +114,9 @@ st_buffer(rio_pontos, dist=8000) %>%
   mutate(buff_dist = 8000)
 ) %>% st_intersection(muni_poly_clip) -> rios_points_buffers
 rios_points_buffers$buff_area_km2 <- round(as.numeric(units::set_units(st_area(rios_points_buffers),km^2)), 3)
+rios_points_buffers$aid_buff <- paste(rios_points_buffers$aid, 
+                                      rios_points_buffers$buff_dist, sep="_")
+length(unique(rios_points_buffers$aid_buff)) # 805
 mapview::mapview(rios_points_buffers)
 
 # Export as gpkg

@@ -260,6 +260,9 @@ rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba")
 municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
 # buffers
 rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
+# buffers 500 m Rio Urucurituba
+rios_points_buffers_500m <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
+  filter(buff_dist ==500, nome_rio == "Rio Urucurituba")
 # buffers 1km Rio Urucurituba
 rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
   filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
@@ -279,6 +282,8 @@ rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba")
 municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
 # buffers
 rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
+rios_points_buffers_500m <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
+  filter(buff_dist ==500, nome_rio == "Rio Urucurituba")
 # buffers 1km Rio Urucurituba
 rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
   filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
@@ -292,12 +297,17 @@ minhas_metricas <- c("lsm_c_cpland",
                      "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
                      "lsm_c_enn_mn", "lsm_c_enn_sd", "lsm_c_enn_cv", 
                      "lsm_c_pd", "lsm_c_cohesion")
+# Buffers
+mybuffers <- rios_points_buffers %>% 
+  filter(buff_dist %in% c(500, 1000, 2000), 
+         nome_rio == "Rio Urucurituba")
 # Calcular as metricás (30 minutos mais ou menos)
-# 8 anos X 9 metricas x 7 classes x 50 pontos
+# 8 anos X 9 metricas x 50 pontos X 3 buffers
+# Numero de classes mude conforme ano, ponto e buffer
 res_metricas <- sample_lsm(mapbiomas_1985_2020, 
-                           y = rios_points_buffers_1km, 
+                           y = mybuffers, 
                            what = minhas_metricas, 
-                           plot_id = data.frame(rios_points_buffers_1km)[, 'aid'], 
+                           plot_id = data.frame(mybuffers)[, 'aid_buff'], 
                            edge_depth=1)
 
 # Incluir nomes para classes e ano para as camadas de raster
@@ -318,5 +328,35 @@ res_metricas <- res_metricas %>%
                           ) 
           ) %>% 
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
+```
+
+Grafico
+
+```{r}
+
+expand.grid(ano = c(1985, 1997, 2006, 2009, 2010, 2011, 2012, 2020), 
+            aid_buff = unique(mybuffers$aid_buff), stringsAsFactors = FALSE) %>% 
+  mutate(class = 33, 
+         newvalue = NA) -> df_all_points
+
+df_all_points %>% left_join(res_metricas %>% 
+                              filter(metric =="cohesion", class==33), 
+                             by=c("aid_buff"="plot_id", "ano"="ano", "class"="class") 
+                            ) %>% 
+  left_join(data.frame(mybuffers) %>% 
+              dplyr::filter(nome_rio == "Rio Urucurituba") %>% 
+              dplyr::select(aid_buff, nome_rio, buff_dist, dist_amazonas_km), 
+  by=c("aid_buff"="aid_buff") 
+  ) %>%
+  mutate(value = replace_na(value, -1)) %>%
+  ggplot(aes(x=ano, y = dist_amazonas_km)) + 
+  geom_point(aes(colour=value)) + 
+  #scale_color_gradient(low="#56B1F7", high="#132B43") + 
+  scale_color_gradient2(low = "green",
+  mid = "yellow",
+  high = "blue",
+  midpoint = 50) +
+  facet_wrap(~buff_dist)
+
 ```
 
