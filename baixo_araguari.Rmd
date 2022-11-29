@@ -322,7 +322,7 @@ rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>
 ```
 
 
-```{r calc-metrics}
+```{r calc-metrics, message=FALSE, warning=FALSE}
 # Metricás 
 minhas_metricas <- c("lsm_c_cpland", 
                      "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
@@ -373,7 +373,7 @@ res_metricas <- res_metricas %>%
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
 ```
 
-Arrumar dados
+Arrumar dados.
 
 ```{r}
 
@@ -403,7 +403,7 @@ df_all_points %>% left_join(res_metricas %>%
 
 Grafico
 
-```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem de 1985 a 2020. Valores anuais de Coesão calculados em 1 km tampões em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
+```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem entre 1985 a 2020. Valores anuais de Coesão (Cohesion) calculados em buffers (raios de 500, 1000 e 2000 metros) em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
 
 res_grafico %>%
   ggplot(aes(x=ano, y = dist_amazonas_km)) + 
