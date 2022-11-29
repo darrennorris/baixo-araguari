@@ -138,6 +138,6 @@ tm_ani <- tm_shape(mapbiomas_1985_2020_ag, bbox = my_bb) +
   tm_facets(ncol=1, nrow=1) 
 
 tmap_animation(tm_ani, delay=100, filename = "www/baixo_araguari.gif")
-saveRDS(tm_ani,"www/tm_ani.RDS")
+saveRDS(tm_ani,"www/tm_ani.RDS") # rds does not create valid object for plot
 saveRDS(mapbiomas_1985_2020_ag,"data/mapbiomas_1985_2020_ag.RDS")
 saveRDS(class_color,"data/class_color.RDS")

@@ -40,22 +40,24 @@ knit_hooks$set(output = function(x, options) {
 # Apresentação
 
 O objetivo é calcular métricas de paisagem, descrever a composição e 
-a configuração da paisagem ao redor do Rio Araguari nos municípios de Macapá e Cutias.
+a configuração da paisagem entre os rios Araguari e Amazonas nos municípios de Macapá e Cutias. Testando a hipótese de que a expansão do canal entre os rios foi precedida pela erosão da cobertura natural do solo.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
+# network example https://friendlycities-gatech.github.io/SSN_tutorial/
 library(tidyverse)
 library(sf)
 library(terra)
 library(tmap)
+
+# colour legend from 01_prep_animation
 class_color <- readRDS("data/class_color.RDS")
+# aggregated rasters from 01_prep_animation
 mapbiomas_1985_2020_ag <- readRDS("data/mapbiomas_1985_2020_ag.RDS")
-# animation
 # zoom in
 my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
   st_bbox()
 my_bb[1] <- 553378
-# animation
+# Make plot for animation
 tm_ani <- tm_shape(mapbiomas_1985_2020_ag, bbox = my_bb) + 
   tm_raster(style = "cat", 
             palette = class_color, legend.show =FALSE)  +
@@ -74,7 +76,7 @@ tm_ani
 As métricas da paisagem nos ajudam a entender as mudanças na paisagem de diferentes perspectivas (visual, ecológica, cultural). Asssim sendo, análises com métricas de paisagem é um atividade fundamental na ecologia da paisagem. Nesta exemplo (https://rpubs.com/darren75/baixo_araguari) aprenderemos sobre como analisar a cobertura da terra com métricas de paisagem em R.
 
 # Área de estudo
-Antigamente o Rio Araguari deságuava no oceano Atlântico, formando ondas que davam origem a Pororoca, utilizada para campeonatos de surfe. No entanto, atualmente, devido ao progressivo processo de erosão do Canal do Urucurituba, quase toda a água do rio é desviada para o rio Amazonas.  Portanto o Pororoca foi extinto, por causa do assoreamento na antiga foz do Rio Araguari.
+Antigamente o Rio Araguari deságuava no oceano Atlântico, onde o encontro das águas de rio com o oceano davam origem a Pororoca, formando as ondas mais longas do planeta utilizada para campeonatos de surfe. No entanto, atualmente, devido ao progressivo processo de expansão do Canal do Urucurituba, quase toda a água do rio é desviada para o rio Amazonas.  Assim sendo, o Pororoca foi extinto, por causa do assoreamento na antiga foz do Rio Araguari.
 
 Para visualizar um exemplo com as mudancas: https://earthengine.google.com/timelapse#v=1.07215,-50.49244,8.691,latLng&t=1.11&ps=50&bt=19840101&et=20201231&startDwell=0&endDwell=0
 
@@ -110,6 +112,18 @@ Lembrando-se de salvar o arquivo ("utm_cover_AP_muni_cuitas_1985.tif") em um loc
 ```{r eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 # Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_1985.tif"
 mapbiomas_1985 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_1997.tif"
+mapbiomas_1997 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2006.tif"
+mapbiomas_2006 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2009.tif"
+mapbiomas_2009 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2010.tif"
+mapbiomas_2010 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2011.tif"
+mapbiomas_2011 <- rast(file.choose())
+# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2012.tif"
+mapbiomas_20012 <- rast(file.choose())
 # Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2020.tif"
 mapbiomas_2020 <- rast(file.choose())
 
@@ -143,6 +157,12 @@ mapbiomas_2006[mapbiomas_2006==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2009.tif"
 mapbiomas_2009 <- rast(rin)
 mapbiomas_2009[mapbiomas_2009==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2010.tif"
+mapbiomas_2010 <- rast(rin)
+mapbiomas_2010[mapbiomas_2010==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2011.tif"
+mapbiomas_2011 <- rast(rin)
+mapbiomas_2011[mapbiomas_2011==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2012.tif"
 mapbiomas_2012 <- rast(rin)
 mapbiomas_2012[mapbiomas_2012==0] <- NA
@@ -158,27 +178,41 @@ mapbiomas_2020[mapbiomas_2020==0] <- NA
 ```
 
 ```{r}
+
+mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1997, mapbiomas_2006, 
+                         mapbiomas_2009, mapbiomas_2010, mapbiomas_2011, 
+                         mapbiomas_2012,
+                         mapbiomas_2020)
+mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
+
+# Aggregate para fazer a mapa
+mapbiomas_1985_2020_ag <- aggregate(mapbiomas_1985_2020, fact=5, fun="modal")
+# Crop
+my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
+  st_bbox()
+my_bb[1] <- 553378
+myextent <- ext(my_bb)
+mapbiomas_1985_2020_ag <- crop(mapbiomas_1985_2020_ag, myextent)
+# Reclassify
 class_nomes <- read_excel("data/raster/AP_utm_muni_cutias/mapbiomas_6_legend.xlsx")
 class_antropic <- class_nomes %>% 
   filter(type_class == "antropic") %>% pull(aid)
+mapbiomas_1985_2020_ag <- classify(mapbiomas_1985_2020_ag, cbind(0, NA))
+reclass_m <- as.matrix(data.frame(human = class_antropic, new_value = 18))
+mapbiomas_1985_2020_ag <- classify(mapbiomas_1985_2020_ag, reclass_m)
 
-mapbiomas_1985_reclass <- mapbiomas_1985
-mapbiomas_1985_reclass[mapbiomas_1985 %in% class_antropic] <- 18
-
-res_pland<- calculate_lsm(mapbiomas_1985, what = "lsm_c_pland")
-# 53.8 Campestre, 31.7 floresta, 8.5 agua, 2.5 pasto, 1.9 campo alagado
-res_pland %>% 
-  left_join(class_nomes, by = c("class" = "aid")) %>% 
-  arrange(desc(value))
-res_reclass_pland<- calculate_lsm(mapbiomas_1985_reclass, what = "lsm_c_pland")
-# 53.8 Campestre, 31.7 floresta, 8.5 agua, 2.5 pasto, 1.9 campo alagado
-res_reclass_pland %>% 
-  left_join(class_nomes, by = c("class" = "aid")) %>% 
-  arrange(desc(value))
-
-# Plot
-selvals <- which(is.finite(unique(values(mapbiomas_1985_reclass))))
-class_vals <- unique(values(mapbiomas_1985_reclass))[selvals]
+# Make Mapbiomas legend
+vals85a20 <- c(unique(values(subset(mapbiomas_1985_2020_ag, 1))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 2))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 3))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 4))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 5))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 6))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 7))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 8))) 
+               )
+selvals <- which(is.finite(vals85a20))
+class_vals <- unique(vals85a20[is.finite(vals85a20)])
 class_color <- class_nomes %>% 
   dplyr::filter(aid %in% class_vals) %>% dplyr::pull(hexadecimal_code)
 class_color <- paste("#", class_color, sep="")
@@ -189,13 +223,100 @@ my_label <- class_nomes %>%
 my_label <- ifelse(my_label=="Agricultura", "Antropico", my_label)
 names(my_label) <- class_nomes %>% filter(aid %in% class_vals) %>% pull(aid)
 
-tm_shape(mapbiomas_1985_reclass) +
+# Plot
+tm_shape(mapbiomas_1985_2020_ag) +
   tm_raster(style = "cat", palette = class_color, labels = my_label, title="") + 
-tm_scale_bar(breaks = c(0, 20, 40), text.size = 1, 
+tm_scale_bar(breaks = c(0, 10), text.size = 1, 
              position=c("right", "bottom")) +
-tm_layout(legend.bg.color="white")
-
+tm_facets(ncol=3) + 
+tm_layout(legend.bg.color="white", legend.outside = TRUE,
+            legend.outside.position = "right", 
+          panel.labels = c('1985', '1997', '2006', 
+                           '2009', '2010', '2011', '2012', 
+                           '2020'))
 
 ```
 
+
+## Dados: Vector (rios, pontos de amostragem, buffers)
+
+Para entender as mudanças precisamos tambem os pontos de amostra. Por isso, precisamos carregar os dados de rios e pontos de amostragem cada 0.75 km. 
+Alem disso, poligonos representando of buffers.
+Vamos carregar as camadas necessarios. 
+Baixar o arquivo Link: [https://github.com/darrennorris/baixo-araguari/blob/main/data/vector/baixo_araguari.GPKG](https://github.com/darrennorris/baixo-araguari/blob/main/data/vector/baixo_araguari.GPKG){target="_blank"} .
+Lembrando-se de salvar o arquivo ("baixo_araguari.GPKG")  em um local conhecido no seu computador. 
+
+Agora, com o proximo bloco de codigo, podemos selecionar o arquivo "baixo_araguari.GPKG", e carregar camadas.
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE, results='hide'}
+meuSIG <- "data/vector/baixo_araguari.GPKG"
+
+# pontos cada 0.75 km
+rio_pontos <- sf::st_read(meuSIG, layer = "rio_pontos")
+# linha central
+rio_gurijuba <- sf::st_read(meuSIG, layer = "rio_gurijuba") 
+rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba") 
+# municipios
+municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
+# buffers
+rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
+# buffers 1km Rio Urucurituba
+rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
+  filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
+
+```
+
+```{r eval=FALSE, message=FALSE, results = FALSE}
+#  Selecionar o arquivo "uaca_estrada.GPKG"
+meuSIG <- file.choose()
+
+# pontos cada 0.75 km
+rio_pontos <- sf::st_read(meuSIG, layer = "rio_pontos")
+# linha central
+rio_gurijuba <- sf::st_read(meuSIG, layer = "rio_gurijuba") 
+rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba") 
+# municipios
+municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
+# buffers
+rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
+# buffers 1km Rio Urucurituba
+rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
+  filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
+
+```
+
+
+```{r calc-metrics}
+# Metricás 
+minhas_metricas <- c("lsm_c_cpland", 
+                     "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
+                     "lsm_c_enn_mn", "lsm_c_enn_sd", "lsm_c_enn_cv", 
+                     "lsm_c_pd", "lsm_c_cohesion")
+# Calcular as metricás (30 minutos mais ou menos)
+# 8 anos X 9 metricas x 7 classes x 50 pontos
+res_metricas <- sample_lsm(mapbiomas_1985_2020, 
+                           y = rios_points_buffers_1km, 
+                           what = minhas_metricas, 
+                           plot_id = data.frame(rios_points_buffers_1km)[, 'aid'], 
+                           edge_depth=1)
+
+# Incluir nomes para classes e ano para as camadas de raster
+unique(res_metricas$layer) # 8 camadas de raster no resultados
+names(mapbiomas_1985_2020) # 8 anos
+
+res_metricas <- res_metricas %>% 
+  left_join(class_nomes, by = c("class" = "aid") 
+            ) %>% 
+   dplyr::mutate(ano = case_when(layer == 1 ~ 1985, 
+                          layer == 2 ~ 1997, 
+                          layer == 3 ~ 2006, 
+                          layer == 4 ~ 2009, 
+                          layer == 5 ~ 2010, 
+                          layer == 6 ~ 2011, 
+                          layer == 7 ~ 2012, 
+                          layer == 8 ~ 2020 
+                          ) 
+          ) %>% 
+  dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
+```
 
