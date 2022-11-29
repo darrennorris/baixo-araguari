@@ -52,7 +52,7 @@ library(tmap)
 # colour legend from 01_prep_animation
 class_color <- readRDS("data/class_color.RDS")
 # aggregated rasters from 01_prep_animation
-mapbiomas_1985_2020_ag <- readRDS("data/mapbiomas_1985_2020_ag.RDS")
+mapbiomas_1985_2020_ag <- terra::rast(readRDS("data/mapbiomas_1985_2020_ag.RDS"))
 # zoom in
 my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
   st_bbox()
@@ -104,131 +104,30 @@ library(readxl)
 
 Existem varios formas de importar e exportar dados geoespaciais.
 Precisamos o arquivo com os dados de MapBiomas referente a região de estudo. 
-Aqui vamos usar dados de 1985 "utm_cover_AP_muni_cutias_1985.tif" .
+Aqui vamos usar dados de 1985 até 2020 "mapbiomas_1985_2020.tif" .
 
-Link: [https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif](https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif){target="_blank"} 
+Link: [https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/mapbiomas_1985_2020.tif](https://github.com/darrennorris/baixo-araguari/blob/main/data/raster/mapbiomas_1985_2020.tif){target="_blank"} 
 
-Lembrando-se de salvar o arquivo ("utm_cover_AP_muni_cuitas_1985.tif") em um local conhecido no seu computador. Agora, nós podemos carregar os dados de cobertura da terra "utm_cover_AP_muni_cuitas_1985.tif" com a função <code>rast</code>.
+Lembrando-se de salvar o arquivo ("utm_cover_AP_muni_cuitas_1985.tif") em um local conhecido no seu computador. Agora, nós podemos carregar os dados de cobertura da terra "mapbiomas_1985_2020.tif" com a função <code>rast</code>.
 ```{r eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_1985.tif"
-mapbiomas_1985 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_1997.tif"
-mapbiomas_1997 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2006.tif"
-mapbiomas_2006 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2009.tif"
-mapbiomas_2009 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2010.tif"
-mapbiomas_2010 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2011.tif"
-mapbiomas_2011 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2012.tif"
-mapbiomas_20012 <- rast(file.choose())
-# Selecionar e carregar arquivo "utm_cover_AP_muni_cuitas_2020.tif"
-mapbiomas_2020 <- rast(file.choose())
+# Selecionar e carregar arquivo "mapbiomas_1985_2020.tif"
+rin <- file.choose()
+mapbiomas_1985_2020 <- rast(rin)
+
 
 ```
 
 ```{r, echo=FALSE}
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif"
-mapbiomas_1985 <- rast(rin)
-mapbiomas_1985[mapbiomas_1985==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1986.tif"
-mapbiomas_1986 <- rast(rin)
-mapbiomas_1986[mapbiomas_1986==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1987.tif"
-mapbiomas_1987 <- rast(rin)
-mapbiomas_1987[mapbiomas_1987==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1988.tif"
-mapbiomas_1988 <- rast(rin)
-mapbiomas_1988[mapbiomas_1988==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1989.tif"
-mapbiomas_1989 <- rast(rin)
-mapbiomas_1989[mapbiomas_1989==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1992.tif"
-mapbiomas_1992 <- rast(rin)
-mapbiomas_1992[mapbiomas_1992==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1993.tif"
-mapbiomas_1993 <- rast(rin)
-mapbiomas_1993[mapbiomas_1993==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1994.tif"
-mapbiomas_1994 <- rast(rin)
-mapbiomas_1994[mapbiomas_1994==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1995.tif"
-mapbiomas_1995 <- rast(rin)
-mapbiomas_1995[mapbiomas_1995==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1996.tif"
-mapbiomas_1996 <- rast(rin)
-mapbiomas_1996[mapbiomas_1996==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1999.tif"
-mapbiomas_1999 <- rast(rin)
-mapbiomas_1999[mapbiomas_1999==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2000.tif"
-mapbiomas_2000 <- rast(rin)
-mapbiomas_2000[mapbiomas_2000==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2001.tif"
-mapbiomas_2001 <- rast(rin)
-mapbiomas_2001[mapbiomas_2001==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2002.tif"
-mapbiomas_2002 <- rast(rin)
-mapbiomas_2002[mapbiomas_2002==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2003.tif"
-mapbiomas_2003 <- rast(rin)
-mapbiomas_2003[mapbiomas_2003==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2008.tif"
-mapbiomas_2008 <- rast(rin)
-mapbiomas_2008[mapbiomas_2008==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2009.tif"
-mapbiomas_2009 <- rast(rin)
-mapbiomas_2009[mapbiomas_2009==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2010.tif"
-mapbiomas_2010 <- rast(rin)
-mapbiomas_2010[mapbiomas_2010==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2011.tif"
-mapbiomas_2011 <- rast(rin)
-mapbiomas_2011[mapbiomas_2011==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2012.tif"
-mapbiomas_2012 <- rast(rin)
-mapbiomas_2012[mapbiomas_2012==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2016.tif"
-mapbiomas_2016 <- rast(rin)
-mapbiomas_2016[mapbiomas_2016==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2017.tif"
-mapbiomas_2017 <- rast(rin)
-mapbiomas_2017[mapbiomas_2017==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2018.tif"
-mapbiomas_2018 <- rast(rin)
-mapbiomas_2018[mapbiomas_2018==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2019.tif"
-mapbiomas_2019 <- rast(rin)
-mapbiomas_2019[mapbiomas_2019==0] <- NA
-rin2020 <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2020.tif"
-mapbiomas_2020 <- rast(rin2020)
-mapbiomas_2020[mapbiomas_2020==0] <- NA
+rin <- "data/raster/mapbiomas_1985_2020.tif"
+mapbiomas_1985_2020 <- rast(rin)
+
 ```
 
+Mapas com legenda de MapBiomas
 ```{r}
-
-mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1986, mapbiomas_1987, 
-                         mapbiomas_1988, mapbiomas_1989, 
-                         mapbiomas_1992, mapbiomas_1993, mapbiomas_1994, 
-                         mapbiomas_1995, mapbiomas_1996,
-                         mapbiomas_1999, mapbiomas_2000, mapbiomas_2001, 
-                         mapbiomas_2002, mapbiomas_2003, 
-                         mapbiomas_2008, mapbiomas_2009, mapbiomas_2010,
-                         mapbiomas_2011, mapbiomas_2012,
-                         mapbiomas_2016, mapbiomas_2017, mapbiomas_2018, 
-                         mapbiomas_2019, mapbiomas_2020)
-mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
-
 # Aggregate para fazer a mapa
 mapbiomas_1985_2020_ag <- aggregate(mapbiomas_1985_2020, fact=5, fun="modal")
-# Crop
-my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
-  st_bbox()
-my_bb[1] <- 553378
-myextent <- ext(my_bb)
-mapbiomas_1985_2020_ag <- crop(mapbiomas_1985_2020_ag, myextent)
+
 # Reclassify
 class_nomes <- read_excel("data/raster/AP_utm_muni_cutias/mapbiomas_6_legend.xlsx")
 class_antropic <- class_nomes %>% 
@@ -264,7 +163,7 @@ vals85a20 <- c(unique(values(subset(mapbiomas_1985_2020_ag, 1))),
                unique(values(subset(mapbiomas_1985_2020_ag, 24))),
                unique(values(subset(mapbiomas_1985_2020_ag, 25)))
                )
-selvals <- which(is.finite(vals85a20))
+
 class_vals <- unique(vals85a20[is.finite(vals85a20)])
 class_color <- class_nomes %>% 
   dplyr::filter(aid %in% class_vals) %>% dplyr::pull(hexadecimal_code)
@@ -315,12 +214,6 @@ rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba")
 municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
 # buffers
 rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
-# buffers 500 m Rio Urucurituba
-rios_points_buffers_500m <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
-  filter(buff_dist ==500, nome_rio == "Rio Urucurituba")
-# buffers 1km Rio Urucurituba
-rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
-  filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
 
 ```
 
@@ -337,16 +230,11 @@ rio_urucurituba <- sf::st_read(meuSIG, layer = "rio_urucurituba")
 municipios_Macapa_Cutias <- sf::st_read(meuSIG, layer = "muni_poly") 
 # buffers
 rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers") 
-rios_points_buffers_500m <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
-  filter(buff_dist ==500, nome_rio == "Rio Urucurituba")
-# buffers 1km Rio Urucurituba
-rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>% 
-  filter(buff_dist ==1000, nome_rio == "Rio Urucurituba")
 
 ```
 
 
-```{r calc-metrics, message=FALSE, warning=FALSE}
+```{r calc-metrics-out, eval=FALSE, message=FALSE, warning=FALSE}
 # Metricás 
 minhas_metricas <- c("lsm_c_cpland", 
                      "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
@@ -366,8 +254,8 @@ res_metricas <- sample_lsm(mapbiomas_1985_2020,
                            edge_depth=1)
 
 # Incluir nomes para classes e ano para as camadas de raster
-unique(res_metricas$layer) # 8 camadas de raster no resultados
-names(mapbiomas_1985_2020) # 8 anos
+unique(res_metricas$layer) # 25 camadas de raster no resultados
+names(mapbiomas_1985_2020) # 25 anos
 
 res_metricas <- res_metricas %>% 
   left_join(class_nomes, by = c("class" = "aid") 
@@ -402,6 +290,48 @@ res_metricas <- res_metricas %>%
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
 ```
 
+
+```{r calc-metrics, echo=FALSE, message=FALSE, warning=FALSE}
+# Buffers need to match those used in 03_res_metricas.R
+mybuffers <- rios_points_buffers %>% 
+  filter(buff_dist %in% c(125, 250, 500, 1000, 2000, 4000), 
+         nome_rio == "Rio Urucurituba")
+res_metricas <- readRDS("data/res_metricas.RDS")
+res_metricas <- res_metricas %>% 
+  left_join(class_nomes, by = c("class" = "aid") 
+            ) %>% 
+   dplyr::mutate(ano = case_when(layer == 1 ~ 1985, 
+                          layer == 2 ~ 1986, 
+                          layer == 3 ~ 1987, 
+                          layer == 4 ~ 1988, 
+                          layer == 5 ~ 1989, 
+                          layer == 6 ~ 1992, 
+                          layer == 7 ~ 1993, 
+                          layer == 8 ~ 1994, 
+                          layer == 9 ~ 1995, 
+                          layer == 10 ~ 1996, 
+                          layer == 11 ~ 1999, 
+                          layer == 12 ~ 2000, 
+                          layer == 13 ~ 2001, 
+                          layer == 14 ~ 2002, 
+                          layer == 15 ~ 2003, 
+                          layer == 16 ~ 2008, 
+                          layer == 17 ~ 2009, 
+                          layer == 18 ~ 2010, 
+                          layer == 19 ~ 2011, 
+                          layer == 20 ~ 2012, 
+                          layer == 21 ~ 2016,
+                          layer == 22 ~ 2017,
+                          layer == 23 ~ 2018,
+                          layer == 24 ~ 2019,
+                          layer == 25 ~ 2020 
+                          ) 
+          ) %>% 
+  dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
+
+```
+
+
 Arrumar dados.
 
 ```{r}
@@ -433,7 +363,7 @@ df_all_points %>% left_join(res_metricas %>%
 
 Grafico
 
-```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem entre 1985 a 2020. Valores anuais de Coesão (Cohesion) calculados em buffers (raios de 500, 1000 e 2000 metros) em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
+```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem entre 1985 a 2020. Valores anuais de Coesão (Cohesion) de agua calculados em buffers (raios de 125, 250, 500, 1000, 2000 e 4000 metros) em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
 
 res_grafico %>%
   ggplot(aes(x=ano, y = dist_amazonas_km)) + 
