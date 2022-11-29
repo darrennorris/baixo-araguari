@@ -325,7 +325,7 @@ rios_points_buffers_1km <- sf::st_read(meuSIG, layer = "rios_points_buffers") %>
 ```
 
 ```{r eval=FALSE, message=FALSE, results = FALSE}
-#  Selecionar o arquivo "uaca_estrada.GPKG"
+#  Selecionar o arquivo "baixo_araguari.GPKG"
 meuSIG <- file.choose()
 
 # pontos cada 0.75 km
