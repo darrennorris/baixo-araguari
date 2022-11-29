@@ -145,6 +145,21 @@ mapbiomas_1988[mapbiomas_1988==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1989.tif"
 mapbiomas_1989 <- rast(rin)
 mapbiomas_1989[mapbiomas_1989==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1992.tif"
+mapbiomas_1992 <- rast(rin)
+mapbiomas_1992[mapbiomas_1992==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1993.tif"
+mapbiomas_1993 <- rast(rin)
+mapbiomas_1993[mapbiomas_1993==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1994.tif"
+mapbiomas_1994 <- rast(rin)
+mapbiomas_1994[mapbiomas_1994==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1995.tif"
+mapbiomas_1995 <- rast(rin)
+mapbiomas_1995[mapbiomas_1995==0] <- NA
+rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1996.tif"
+mapbiomas_1996 <- rast(rin)
+mapbiomas_1996[mapbiomas_1996==0] <- NA
 rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1999.tif"
 mapbiomas_1999 <- rast(rin)
 mapbiomas_1999[mapbiomas_1999==0] <- NA
@@ -196,6 +211,8 @@ mapbiomas_2020[mapbiomas_2020==0] <- NA
 
 mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1986, mapbiomas_1987, 
                          mapbiomas_1988, mapbiomas_1989, 
+                         mapbiomas_1992, mapbiomas_1993, mapbiomas_1994, 
+                         mapbiomas_1995, mapbiomas_1996,
                          mapbiomas_1999, mapbiomas_2000, mapbiomas_2001, 
                          mapbiomas_2002, mapbiomas_2003, 
                          mapbiomas_2008, mapbiomas_2009, mapbiomas_2010,
@@ -240,7 +257,13 @@ vals85a20 <- c(unique(values(subset(mapbiomas_1985_2020_ag, 1))),
                unique(values(subset(mapbiomas_1985_2020_ag, 17))),
                unique(values(subset(mapbiomas_1985_2020_ag, 18))),
                unique(values(subset(mapbiomas_1985_2020_ag, 19))),
-               unique(values(subset(mapbiomas_1985_2020_ag, 20))))
+               unique(values(subset(mapbiomas_1985_2020_ag, 20))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 21))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 22))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 23))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 24))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 25)))
+               )
 selvals <- which(is.finite(vals85a20))
 class_vals <- unique(vals85a20[is.finite(vals85a20)])
 class_color <- class_nomes %>% 
@@ -261,7 +284,8 @@ tm_scale_bar(breaks = c(0, 10), text.size = 1,
 tm_facets(ncol=5) + 
 tm_layout(legend.bg.color="white", legend.outside = TRUE,
             legend.outside.position = "right", 
-          panel.labels = c('1985', '1986', '1987', '1988','1989',
+          panel.labels = c('1985', '1986', '1987', '1988','1989', 
+                           '1992', '1993', '1994', '1995','1996',
                            '1999', '2000', '2001', '2002', '2003',
                           '2008', '2009', '2010', '2011', '2012', 
                            '2016', '2017', '2018', '2019', '2020'))
@@ -353,21 +377,26 @@ res_metricas <- res_metricas %>%
                           layer == 3 ~ 1987, 
                           layer == 4 ~ 1988, 
                           layer == 5 ~ 1989, 
-                          layer == 6 ~ 1999, 
-                          layer == 7 ~ 2000, 
-                          layer == 8 ~ 2001, 
-                          layer == 9 ~ 2002, 
-                          layer == 10 ~ 2003, 
-                          layer == 11 ~ 2008, 
-                          layer == 12 ~ 2009, 
-                          layer == 13 ~ 2010, 
-                          layer == 14 ~ 2011, 
-                          layer == 15 ~ 2012, 
-                          layer == 16 ~ 2016,
-                          layer == 17 ~ 2017,
-                          layer == 18 ~ 2018,
-                          layer == 19 ~ 2019,
-                          layer == 20 ~ 2020 
+                          layer == 6 ~ 1992, 
+                          layer == 7 ~ 1993, 
+                          layer == 8 ~ 1994, 
+                          layer == 9 ~ 1995, 
+                          layer == 10 ~ 1996, 
+                          layer == 11 ~ 1999, 
+                          layer == 12 ~ 2000, 
+                          layer == 13 ~ 2001, 
+                          layer == 14 ~ 2002, 
+                          layer == 15 ~ 2003, 
+                          layer == 16 ~ 2008, 
+                          layer == 17 ~ 2009, 
+                          layer == 18 ~ 2010, 
+                          layer == 19 ~ 2011, 
+                          layer == 20 ~ 2012, 
+                          layer == 21 ~ 2016,
+                          layer == 22 ~ 2017,
+                          layer == 23 ~ 2018,
+                          layer == 24 ~ 2019,
+                          layer == 25 ~ 2020 
                           ) 
           ) %>% 
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
@@ -377,7 +406,8 @@ Arrumar dados.
 
 ```{r}
 
-expand.grid(ano = c(1985, 1986, 1987, 1988,1989,
+expand.grid(ano = c(1985, 1986, 1987, 1988,1989, 
+                    1992, 1993, 1994, 1995, 1996, 
                            1999, 2000, 2001, 2002, 2003,
                           2008, 2009, 2010, 2011, 2012, 
                            2016, 2017, 2018, 2019, 2020), 
