@@ -250,18 +250,20 @@ rios_points_buffers <- sf::st_read(meuSIG, layer = "rios_points_buffers")
 ```
 
 
+# Métricas
+
 ```{r calc-metrics-out, eval=FALSE, message=FALSE, warning=FALSE}
-# Metricás 
+# Métricas 
 minhas_metricas <- c("lsm_c_cpland", 
                      "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
                      "lsm_c_enn_mn", "lsm_c_enn_sd", "lsm_c_enn_cv", 
                      "lsm_c_pd", "lsm_c_cohesion")
 # Buffers
 mybuffers <- rios_points_buffers %>% 
-  filter(buff_dist %in% c(500, 1000, 2000), 
+  filter(buff_dist %in% c(125, 250, 500, 1000, 2000, 4000), 
          nome_rio == "Rio Urucurituba")
-# Calcular as metricás (50 minutos mais ou menos)
-# 20 anos X 9 metricas x 50 pontos X 3 buffers
+# Calcular as métricas (2 horas mais ou menos)
+# 36 anos X 9 métricas x 50 pontos X 3 buffers
 # Numero de classes mude conforme ano, ponto e buffer
 res_metricas <- sample_lsm(mapbiomas_1985_2020, 
                            y = mybuffers, 
@@ -270,49 +272,9 @@ res_metricas <- sample_lsm(mapbiomas_1985_2020,
                            edge_depth=1)
 
 # Incluir nomes para classes e ano para as camadas de raster
-unique(res_metricas$layer) # 25 camadas de raster no resultados
-names(mapbiomas_1985_2020) # 25 anos
+unique(res_metricas$layer) # 36 camadas de raster no resultados
+names(mapbiomas_1985_2020) # 36 anos
 
-res_metricas <- res_metricas %>% 
-  left_join(class_nomes, by = c("class" = "aid") 
-            ) %>% 
-   dplyr::mutate(ano = case_when(layer == 1 ~ 1985, 
-                          layer == 2 ~ 1986, 
-                          layer == 3 ~ 1987, 
-                          layer == 4 ~ 1988, 
-                          layer == 5 ~ 1989, 
-                          layer == 6 ~ 1992, 
-                          layer == 7 ~ 1993, 
-                          layer == 8 ~ 1994, 
-                          layer == 9 ~ 1995, 
-                          layer == 10 ~ 1996, 
-                          layer == 11 ~ 1999, 
-                          layer == 12 ~ 2000, 
-                          layer == 13 ~ 2001, 
-                          layer == 14 ~ 2002, 
-                          layer == 15 ~ 2003, 
-                          layer == 16 ~ 2008, 
-                          layer == 17 ~ 2009, 
-                          layer == 18 ~ 2010, 
-                          layer == 19 ~ 2011, 
-                          layer == 20 ~ 2012, 
-                          layer == 21 ~ 2016,
-                          layer == 22 ~ 2017,
-                          layer == 23 ~ 2018,
-                          layer == 24 ~ 2019,
-                          layer == 25 ~ 2020 
-                          ) 
-          ) %>% 
-  dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
-```
-
-
-```{r calc-metrics, echo=FALSE, message=FALSE, warning=FALSE}
-# Buffers need to match those used in 03_res_metricas.R
-mybuffers <- rios_points_buffers %>% 
-  filter(buff_dist %in% c(125, 250, 500, 1000, 2000, 4000), 
-         nome_rio == "Rio Urucurituba")
-res_metricas <- readRDS("data/res_metricas.RDS")
 res_metricas <- res_metricas %>% 
   left_join(class_nomes, by = c("class" = "aid") 
             ) %>% 
@@ -351,34 +313,90 @@ res_metricas <- res_metricas %>%
                           layer == 33 ~ 2017,
                           layer == 34 ~ 2018,
                           layer == 35 ~ 2019,
-                          layer == 36 ~ 2020 
+                          layer == 36 ~ 2020
                           ) 
           ) %>% 
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
+```
+
+
+```{r calc-metrics, echo=FALSE, message=FALSE, warning=FALSE}
+# Buffers need to match those used in 03_res_metricas.R
+mybuffers <- rios_points_buffers %>% 
+  filter(buff_dist %in% c(125, 250, 500, 1000, 2000, 4000), 
+         nome_rio == "Rio Urucurituba")
+res_metricas <- readRDS("data/res_metricas.RDS")
+
+res_metricas <- res_metricas %>%
+   dplyr::mutate(ano = case_when(layer == 1 ~ 1985, 
+                          layer == 2 ~ 1986, 
+                          layer == 3 ~ 1987, 
+                          layer == 4 ~ 1988, 
+                          layer == 5 ~ 1989, 
+                          layer == 6 ~ 1990, 
+                          layer == 7 ~ 1991,
+                          layer == 8 ~ 1992, 
+                          layer == 9 ~ 1993, 
+                          layer == 10 ~ 1994, 
+                          layer == 11 ~ 1995, 
+                          layer == 12 ~ 1996, 
+                          layer == 13 ~ 1997,
+                          layer == 14 ~ 1998,
+                          layer == 15 ~ 1999, 
+                          layer == 16 ~ 2000, 
+                          layer == 17 ~ 2001, 
+                          layer == 18 ~ 2002, 
+                          layer == 19 ~ 2003, 
+                          layer == 20 ~ 2004,
+                          layer == 21 ~ 2005,
+                          layer == 22 ~ 2006,
+                          layer == 23 ~ 2007,
+                          layer == 24 ~ 2008, 
+                          layer == 25 ~ 2009, 
+                          layer == 26 ~ 2010, 
+                          layer == 27 ~ 2011, 
+                          layer == 28 ~ 2012, 
+                          layer == 29 ~ 2013,
+                          layer == 30 ~ 2014,
+                          layer == 31 ~ 2015,
+                          layer == 32 ~ 2016,
+                          layer == 33 ~ 2017,
+                          layer == 34 ~ 2018,
+                          layer == 35 ~ 2019,
+                          layer == 36 ~ 2020 
+                          ) 
+          ) 
+
+# Tabela de dados completos (todos os anos para cada buffer na analise)
+expand.grid(ano = c(1985:2020), 
+            aid_buff = unique(mybuffers$aid_buff), 
+            class = unique(res_metricas$class), 
+            metric = unique(res_metricas$metric),
+            stringsAsFactors = FALSE) %>% 
+  mutate(newvalue = NA) -> df_all_points
+
+# 36 anos x 50 pontos x 6 buffers x 7 classes X 9 metricas
+res_metricas_completas <- df_all_points %>% 
+  left_join(res_metricas, 
+   by=c("aid_buff"="plot_id", "ano"="ano", "class"="class", "metric"="metric") 
+   ) %>% 
+  dplyr::select(ano, aid_buff, class, metric, level, value)
 
 ```
 
 
+# Gráficos
+
 Arrumar dados.
 
 ```{r}
-
-expand.grid(ano = c(1985:2020), 
-            aid_buff = unique(mybuffers$aid_buff), 
-            stringsAsFactors = FALSE) %>% 
-  mutate(class = 33, 
-         newvalue = NA) -> df_all_points
-
-df_all_points %>% left_join(res_metricas %>% 
-                              filter(metric =="cohesion", class==33), 
-                             by=c("aid_buff"="plot_id", "ano"="ano", "class"="class") 
-                            ) %>% 
+# Incluir dados referentes os buffers
+res_metricas_completas <- res_metricas_completas %>% 
   left_join(data.frame(mybuffers) %>% 
-              dplyr::filter(nome_rio == "Rio Urucurituba") %>% 
-              dplyr::select(aid_buff, nome_rio, buff_dist, dist_amazonas_km), 
-  by=c("aid_buff"="aid_buff") 
-  ) %>% 
-    mutate(value = replace_na(value, -1)) -> res_grafico
+              dplyr::select(aid_buff, nome_rio, 
+                            buff_dist, dist_amazonas_km, buff_area_km2), 
+              by=c("aid_buff"="aid_buff")
+              )
 
 
 
@@ -387,17 +405,62 @@ df_all_points %>% left_join(res_metricas %>%
 
 Grafico
 
-```{r fig-dynamic, fig.cap="Dinâmica da cobertura fluvial. Mudanças na configuração da cobertura hídrica na paisagem entre 1985 a 2020. Valores anuais de Coesão (Cohesion) de agua calculados em buffers (raios de 125, 250, 500, 1000, 2000 e 4000 metros) em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
+```{r make-fig-dynamic}
 
-res_grafico %>%
+# Organizar dados
+# 10800 linhas (36 anos x 50 pontos x 6 buffers X 1 class x 1 metrica)
+res_metricas_completas %>% 
+  filter(metric=="cohesion", class==33) %>%
+  mutate(value = replace_na(value, -1)) %>%
   ggplot(aes(x=ano, y = dist_amazonas_km)) + 
   geom_point(aes(colour=value)) + 
-  #scale_color_gradient(low="#56B1F7", high="#132B43") + 
-  scale_color_gradient2("cohesion", 
+  scale_color_gradient2("Cohesion", 
                         low = "green", mid = "yellow", high = "blue", 
-                        midpoint = 50) +
-  facet_wrap(~buff_dist) + 
-  labs(y="distância até Rio Amazonas (km)")
+                        midpoint = 50, 
+                        guide = guide_colorbar(title.position = "top")) +
+  facet_wrap(~buff_dist, nrow=6) + 
+  labs(title = "(A)", 
+       y="distância até Rio Amazonas (km)") + 
+  theme(legend.position = "top") + 
+  guides(colorbar = guide_legend(title.position = "top")) -> fig_cohesion
 
+res_metricas_completas %>% 
+  filter(metric=="cpland", class==33) %>%
+  mutate(value = replace_na(value, -1)) %>%
+  ggplot(aes(x=ano, y = dist_amazonas_km)) + 
+  geom_point(aes(colour=value)) + 
+  scale_color_gradient2("Área central", 
+                        low = "green", mid = "yellow", high = "blue", 
+                        midpoint = 50, 
+                        guide = guide_colorbar(title.position = "top")) +
+  facet_wrap(~buff_dist, nrow=6) + 
+  labs(title = "(B)", 
+       y="distância até Rio Amazonas (km)") + 
+  theme(legend.position = "top") + 
+  guides(colorbar = guide_legend(title.position = "top"))-> fig_area 
+
+res_metricas_completas %>% 
+  filter(metric=="pd", class==33) %>%
+  mutate(value = if_else(value <0.1, NA_real_, value)) %>%
+  ggplot(aes(x=ano, y = dist_amazonas_km)) + 
+  geom_point(aes(colour=value)) + 
+  scale_color_gradient("Densidade", 
+                        #low = "green", high = "blue", 
+                       low = "#56B1F7", high = "#132B43", 
+                       guide = guide_colorbar(title.position = "top")) + 
+  scale_y_continuous() +
+  facet_wrap(~buff_dist, nrow=6) + 
+  labs(title = "(C)", 
+       y="distância até Rio Amazonas (km)") + 
+  theme(legend.position = "top") + 
+  guides(colorbar = guide_legend(title.position = "top")) -> fig_density 
+
+png("figures/fig_metricas.png", width=6, height=9, 
+    units="in", res = 600)
+grid.arrange(fig_cohesion, fig_area, fig_density, ncol=3)
+invisible(dev.off())
 ```
 
+```{r insert-fig-dynamic, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%", out.height="80%", fig.cap="Dinâmica temporal da paisagem hidrico entre os rios Amazonas e Araguari. Mudanças na configuração da cobertura hídrica na paisagem entre 1985 a 2020. Valores anuais de Coesão (Cohesion), Areá central (core area) e Densidade de fragmentos de agua calculados em buffers (raios de 125, 250, 500, 1000, 2000 e 4000 metros) em torno de 50 pontos regularmente espaçados entre os rios Amazonas e Araguari."}
+knitr::include_graphics("figures/fig_metricas.png")
+```
