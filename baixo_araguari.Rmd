@@ -52,7 +52,9 @@ library(tmap)
 # colour legend from 01_prep_animation
 class_color <- readRDS("data/class_color.RDS")
 # aggregated rasters from 01_prep_animation
-mapbiomas_1985_2020_ag <- terra::rast(readRDS("data/mapbiomas_1985_2020_ag.RDS"))
+mapbiomas_1985_2020_ag <- readRDS("data/mapbiomas_1985_2020_ag.RDS")
+mapbiomas_1985_2020_ag <- subset(mapbiomas_1985_2020_ag, c(1,5, 10, 15, 
+                                                           20, 25, 30, 36)) 
 # zoom in
 my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
   st_bbox()
@@ -161,7 +163,18 @@ vals85a20 <- c(unique(values(subset(mapbiomas_1985_2020_ag, 1))),
                unique(values(subset(mapbiomas_1985_2020_ag, 22))),
                unique(values(subset(mapbiomas_1985_2020_ag, 23))),
                unique(values(subset(mapbiomas_1985_2020_ag, 24))),
-               unique(values(subset(mapbiomas_1985_2020_ag, 25)))
+               unique(values(subset(mapbiomas_1985_2020_ag, 25))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 26))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 27))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 28))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 29))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 30))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 31))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 32))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 33))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 34))),
+               unique(values(subset(mapbiomas_1985_2020_ag, 35))), 
+               unique(values(subset(mapbiomas_1985_2020_ag, 36)))
                )
 
 class_vals <- unique(vals85a20[is.finite(vals85a20)])
@@ -180,13 +193,16 @@ tm_shape(mapbiomas_1985_2020_ag) +
   tm_raster(style = "cat", palette = class_color, labels = my_label, title="") + 
 tm_scale_bar(breaks = c(0, 10), text.size = 1, 
              position=c("right", "bottom")) +
-tm_facets(ncol=5) + 
+tm_facets(ncol=6) + 
 tm_layout(legend.bg.color="white", legend.outside = TRUE,
             legend.outside.position = "right", 
-          panel.labels = c('1985', '1986', '1987', '1988','1989', 
-                           '1992', '1993', '1994', '1995','1996',
-                           '1999', '2000', '2001', '2002', '2003',
+          panel.labels = c('1985', '1986', '1987', '1988','1989', '1990',
+                          '1991',  '1992', '1993', '1994', '1995','1996', 
+                          '1997', '1998',
+                           '1999', '2000', '2001', '2002', '2003', 
+                          '2004', '2005', '2006', '2007',
                           '2008', '2009', '2010', '2011', '2012', 
+                          '2013', '2014', '2015',
                            '2016', '2017', '2018', '2019', '2020'))
 
 ```
@@ -305,26 +321,37 @@ res_metricas <- res_metricas %>%
                           layer == 3 ~ 1987, 
                           layer == 4 ~ 1988, 
                           layer == 5 ~ 1989, 
-                          layer == 6 ~ 1992, 
-                          layer == 7 ~ 1993, 
-                          layer == 8 ~ 1994, 
-                          layer == 9 ~ 1995, 
-                          layer == 10 ~ 1996, 
-                          layer == 11 ~ 1999, 
-                          layer == 12 ~ 2000, 
-                          layer == 13 ~ 2001, 
-                          layer == 14 ~ 2002, 
-                          layer == 15 ~ 2003, 
-                          layer == 16 ~ 2008, 
-                          layer == 17 ~ 2009, 
-                          layer == 18 ~ 2010, 
-                          layer == 19 ~ 2011, 
-                          layer == 20 ~ 2012, 
-                          layer == 21 ~ 2016,
-                          layer == 22 ~ 2017,
-                          layer == 23 ~ 2018,
-                          layer == 24 ~ 2019,
-                          layer == 25 ~ 2020 
+                          layer == 6 ~ 1990, 
+                          layer == 7 ~ 1991,
+                          layer == 8 ~ 1992, 
+                          layer == 9 ~ 1993, 
+                          layer == 10 ~ 1994, 
+                          layer == 11 ~ 1995, 
+                          layer == 12 ~ 1996, 
+                          layer == 13 ~ 1997,
+                          layer == 14 ~ 1998,
+                          layer == 15 ~ 1999, 
+                          layer == 16 ~ 2000, 
+                          layer == 17 ~ 2001, 
+                          layer == 18 ~ 2002, 
+                          layer == 19 ~ 2003, 
+                          layer == 20 ~ 2004,
+                          layer == 21 ~ 2005,
+                          layer == 22 ~ 2006,
+                          layer == 23 ~ 2007,
+                          layer == 24 ~ 2008, 
+                          layer == 25 ~ 2009, 
+                          layer == 26 ~ 2010, 
+                          layer == 27 ~ 2011, 
+                          layer == 28 ~ 2012, 
+                          layer == 29 ~ 2013,
+                          layer == 30 ~ 2014,
+                          layer == 31 ~ 2015,
+                          layer == 32 ~ 2016,
+                          layer == 33 ~ 2017,
+                          layer == 34 ~ 2018,
+                          layer == 35 ~ 2019,
+                          layer == 36 ~ 2020 
                           ) 
           ) %>% 
   dplyr::select(ano, plot_id, class, classe_descricao, metric, value)
@@ -336,12 +363,9 @@ Arrumar dados.
 
 ```{r}
 
-expand.grid(ano = c(1985, 1986, 1987, 1988,1989, 
-                    1992, 1993, 1994, 1995, 1996, 
-                           1999, 2000, 2001, 2002, 2003,
-                          2008, 2009, 2010, 2011, 2012, 
-                           2016, 2017, 2018, 2019, 2020), 
-            aid_buff = unique(mybuffers$aid_buff), stringsAsFactors = FALSE) %>% 
+expand.grid(ano = c(1985:2020), 
+            aid_buff = unique(mybuffers$aid_buff), 
+            stringsAsFactors = FALSE) %>% 
   mutate(class = 33, 
          newvalue = NA) -> df_all_points
 

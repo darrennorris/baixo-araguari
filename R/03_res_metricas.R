@@ -7,104 +7,38 @@ library(raster)
 library(terra)
 library(readxl)
 
+#works one folder at a time
+get_files <- function(folder_name = NA) {
+  library(tidyverse)
+  folder_location <- folder_name
+  in_files <- list.files(folder_location, 
+                         pattern = ".tif", full.names = TRUE)
+  data.frame(folder_id = folder_location, file_id = in_files) %>%  
+    group_by(folder_id, file_id) %>% 
+    summarise(file_count = n()) %>% 
+    ungroup() -> df_muni_tif
+  return(df_muni_tif)
+}
+infolder <- "data/raster/AP_utm_muni_cutias"
+df_muni_tif <- get_files(folder_name = infolder)
+df_muni_tif %>% 
+  mutate(ano = str_sub(file_id, -8, -5), 
+  ) -> df_muni_tif
 # Dados Mapbiomas
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1985.tif"
-mapbiomas_1985 <- rast(rin)
-mapbiomas_1985[mapbiomas_1985==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1986.tif"
-mapbiomas_1986 <- rast(rin)
-mapbiomas_1986[mapbiomas_1986==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1987.tif"
-mapbiomas_1987 <- rast(rin)
-mapbiomas_1987[mapbiomas_1987==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1988.tif"
-mapbiomas_1988 <- rast(rin)
-mapbiomas_1988[mapbiomas_1988==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1989.tif"
-mapbiomas_1989 <- rast(rin)
-mapbiomas_1989[mapbiomas_1989==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1992.tif"
-mapbiomas_1992 <- rast(rin)
-mapbiomas_1992[mapbiomas_1992==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1993.tif"
-mapbiomas_1993 <- rast(rin)
-mapbiomas_1993[mapbiomas_1993==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1994.tif"
-mapbiomas_1994 <- rast(rin)
-mapbiomas_1994[mapbiomas_1994==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1995.tif"
-mapbiomas_1995 <- rast(rin)
-mapbiomas_1995[mapbiomas_1995==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1996.tif"
-mapbiomas_1996 <- rast(rin)
-mapbiomas_1996[mapbiomas_1996==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_1999.tif"
-mapbiomas_1999 <- rast(rin)
-mapbiomas_1999[mapbiomas_1999==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2000.tif"
-mapbiomas_2000 <- rast(rin)
-mapbiomas_2000[mapbiomas_2000==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2001.tif"
-mapbiomas_2001 <- rast(rin)
-mapbiomas_2001[mapbiomas_2001==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2002.tif"
-mapbiomas_2002 <- rast(rin)
-mapbiomas_2002[mapbiomas_2002==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2003.tif"
-mapbiomas_2003 <- rast(rin)
-mapbiomas_2003[mapbiomas_2003==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2008.tif"
-mapbiomas_2008 <- rast(rin)
-mapbiomas_2008[mapbiomas_2008==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2009.tif"
-mapbiomas_2009 <- rast(rin)
-mapbiomas_2009[mapbiomas_2009==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2010.tif"
-mapbiomas_2010 <- rast(rin)
-mapbiomas_2010[mapbiomas_2010==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2011.tif"
-mapbiomas_2011 <- rast(rin)
-mapbiomas_2011[mapbiomas_2011==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2012.tif"
-mapbiomas_2012 <- rast(rin)
-mapbiomas_2012[mapbiomas_2012==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2016.tif"
-mapbiomas_2016 <- rast(rin)
-mapbiomas_2016[mapbiomas_2016==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2017.tif"
-mapbiomas_2017 <- rast(rin)
-mapbiomas_2017[mapbiomas_2017==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2018.tif"
-mapbiomas_2018 <- rast(rin)
-mapbiomas_2018[mapbiomas_2018==0] <- NA
-rin <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2019.tif"
-mapbiomas_2019 <- rast(rin)
-mapbiomas_2019[mapbiomas_2019==0] <- NA
-rin2020 <- "data/raster/AP_utm_muni_cutias/utm_cover_AP_muni_cutias_2020.tif"
-mapbiomas_2020 <- rast(rin2020)
-mapbiomas_2020[mapbiomas_2020==0] <- NA
-
-mapbiomas_1985_2020 <- c(mapbiomas_1985, mapbiomas_1986, mapbiomas_1987, 
-                         mapbiomas_1988, mapbiomas_1989, 
-                         mapbiomas_1992, mapbiomas_1993, mapbiomas_1994, 
-                         mapbiomas_1995, mapbiomas_1996,
-                         mapbiomas_1999, mapbiomas_2000, mapbiomas_2001, 
-                         mapbiomas_2002, mapbiomas_2003, 
-                         mapbiomas_2008, mapbiomas_2009, mapbiomas_2010,
-                         mapbiomas_2011, mapbiomas_2012,
-                         mapbiomas_2016, mapbiomas_2017, mapbiomas_2018, 
-                         mapbiomas_2019, mapbiomas_2020)
-plot(subset(mapbiomas_1985_2020,1), type="classes")
+mytifs <- list.files("data/raster/AP_utm_muni_cutias", 
+                  pattern='\\.tif$', full.names = TRUE)
+mapbiomas_1985_2020 <- rast(mytifs)
 # Crop
 my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>% 
   st_bbox()
 my_bb[1] <- 553378
 myextent <- ext(my_bb)
-mapbiomas_1985_2020 <- crop(mapbiomas_1985_2020, myextent)
-plot(subset(mapbiomas_1985_2020,1))
+mapbiomas_1985_2020 <- terra::crop(mapbiomas_1985_2020, myextent)
 
 # Reclassify
 # Human all together
+mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
+plot(subset(mapbiomas_1985_2020,1), type="classes")
 class_nomes <- read_excel("data/raster/AP_utm_muni_cutias/mapbiomas_6_legend.xlsx")
 class_antropic <- class_nomes %>% 
   filter(type_class == "antropic") %>% pull(aid)
@@ -112,6 +46,8 @@ reclass_m <- as.matrix(data.frame(human = class_antropic, new_value = 18))
 mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, reclass_m)
 plot(subset(mapbiomas_1985_2020,1), type="classes")
 
+mapbiomas_1985_2020_ag <- aggregate(mapbiomas_1985_2020, fact=5, fun="modal")
+saveRDS(mapbiomas_1985_2020_ag,"data/mapbiomas_1985_2020_ag.RDS")
 
 # Dados: Vector (rios, pontos de amostragem, buffers)
 meuSIG <- "data/vector/baixo_araguari.GPKG"
@@ -146,8 +82,7 @@ minhas_metricas <- c("lsm_c_cpland",
                      "lsm_c_enn_mn", "lsm_c_enn_sd", "lsm_c_enn_cv", 
                      "lsm_c_pd", "lsm_c_cohesion")
 
-# Calcular as metricás (50 minutos mais ou menos)
-# 20 anos X 9 metricas x 50 pontos X 3 buffers
+# 36 anos X 9 metricas x 50 pontos X 3 buffers
 # Numero de classes mude conforme ano, ponto e buffer
 res_metricas <- sample_lsm(mapbiomas_1985_2020, 
                            y = mybuffers, 
