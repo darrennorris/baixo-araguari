@@ -34,11 +34,10 @@ my_bb <- st_read("data/vector/AP_muni_Macapa_Cutias_clipbuff2km.shp") %>%
 my_bb[1] <- 553378
 myextent <- ext(my_bb)
 mapbiomas_1985_2020 <- terra::crop(mapbiomas_1985_2020, myextent)
-
+plot(subset(mapbiomas_1985_2020,1), type="classes")
 # Reclassify
 # Human all together
 mapbiomas_1985_2020 <- classify(mapbiomas_1985_2020, cbind(0, NA))
-plot(subset(mapbiomas_1985_2020,1), type="classes")
 class_nomes <- read_excel("data/raster/AP_utm_muni_cutias/mapbiomas_6_legend.xlsx")
 class_antropic <- class_nomes %>% 
   filter(type_class == "antropic") %>% pull(aid)
@@ -76,8 +75,8 @@ writeRaster(mapbiomas_1985_2020, "data/raster/mapbiomas_1985_2020.tif",
 tmpFiles(current =TRUE, remove = TRUE) 
 
 # Metricás 
-minhas_metricas <- c("lsm_c_cpland", 
-                     "lsm_c_np",
+minhas_metricas <- c("lsm_c_cpland",
+                     "lsm_c_np", "lsm_c_lpi", "lsm_c_ai",
                      "lsm_c_area_mn", "lsm_c_area_sd", "lsm_c_area_cv", 
                      "lsm_c_enn_mn", "lsm_c_enn_sd", "lsm_c_enn_cv", 
                      "lsm_c_pd", "lsm_c_cohesion")
